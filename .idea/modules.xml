@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Ftpclient.iml" filepath="$PROJECT_DIR$/Ftpclient.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commons-io-2.4/commons-io-2.4.iml" filepath="$PROJECT_DIR$/commons-io-2.4/commons-io-2.4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/commons-net-3.3/commons-net-3.3.iml" filepath="$PROJECT_DIR$/commons-net-3.3/commons-net-3.3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ftp4j-1.7.2/ftp4j-1.7.2.iml" filepath="$PROJECT_DIR$/ftp4j-1.7.2/ftp4j-1.7.2.iml" />
     </modules>
   </component>
 </project>
