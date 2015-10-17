@@ -1,16 +1,17 @@
 package baranek.vojtech.ftpclient;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ArrayAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -21,7 +22,6 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends AppCompatActivity {
-
 
 
     @Bind(R.id.button)
@@ -41,79 +41,98 @@ public class MainActivity extends AppCompatActivity {
      * FTP PASSWORD
      ***********/
     static final String FTP_PASS = "ciscoforlife32";
-    @Bind(R.id.listView)
-    ListView listView;
+    @Bind(R.id.recyclerViewMain)
+    RecyclerView recyclerViewMain;
+    @Bind(R.id.progress)
+    ProgressBar progress;
 
-    private FTPClient mFTPClient;
-    public String[] strFiles;
+
+    private MyRecyclerAdapter adapter;
+    private  FTPFile[] files;
+private String strPath ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        StrictMode.ThreadPolicy tp = StrictMode.ThreadPolicy.LAX;
-        StrictMode.setThreadPolicy(tp);
-
-
-
+        recyclerViewMain.setLayoutManager(new LinearLayoutManager(this));
+        strPath = "";
+        LoadIntoDirectory(strPath);
 
     }
+
+    public void LoadIntoDirectory(String dir){
+
+    new AssyncFtpTask().execute(dir);
+
+    }
+
+    public class AssyncFtpTask extends AsyncTask<String, Void, Integer>{
+
+        @Override
+        protected Integer doInBackground(String... params) {
+         FTPClient  mFTPClient = new FTPClient();
+            Integer result = 0;
+
+            try {
+
+                mFTPClient.setControlEncoding("UTF-8");
+                mFTPClient.connect(FTP_HOST, 21);
+                mFTPClient.login(FTP_USER, FTP_PASS);
+                mFTPClient.enterLocalPassiveMode();
+                if (params[0].equals("/.."))
+                    {int i = 0;
+                    i = strPath.lastIndexOf("/");
+                    strPath = strPath.substring(0,i);}
+                else {
+                    strPath = strPath +"/"+params[0];
+                }
+                mFTPClient.changeWorkingDirectory(strPath);
+                strPath = mFTPClient.printWorkingDirectory();
+                files=mFTPClient.listFiles();
+                 result=1;
+                mFTPClient.disconnect();
+            } catch (SocketException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            progress.setVisibility(View.VISIBLE);
+            setProgressBarIndeterminateVisibility(true);
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+           progress.setVisibility(View.GONE);
+            if (integer==1){
+                adapter = new MyRecyclerAdapter(getApplicationContext(),files, MainActivity.this);
+                recyclerViewMain.setAdapter(adapter);
+                Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
+
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Nepodařilo se načíst data", Toast.LENGTH_SHORT).show();
+            }
+        }}
+
+
+
+
+
+
+
 
     @OnClick(R.id.button)
     public void buttonclick() {
-        mFTPClient = new FTPClient();
-        try {
 
-
-            mFTPClient.connect(FTP_HOST, 21);
-            int reply = mFTPClient.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                return;
-            }
-
-            mFTPClient.login(FTP_USER, FTP_PASS);
-
-
-            // Use passive mode as default because most of us are
-            // behind firewalls these days.
-            mFTPClient.enterLocalPassiveMode();
-
-
-            FTPFile[] files = mFTPClient.listFiles("/test");
-
-            strFiles = new String[files.length];
-
-            for (int i = 0; i < files.length; i++) {
-                strFiles[i] = files[i].getName();
-            }
-
-        } catch (SocketException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        listView.setAdapter( new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strFiles));
 
     }
 
-
-    private void connecttoFTP() throws SocketException, IOException {
-
-        mFTPClient.connect(FTP_HOST, 21);
-        int reply = mFTPClient.getReplyCode();
-        if (!FTPReply.isPositiveCompletion(reply)) {
-            return;
-        }
-
-        mFTPClient.login(FTP_USER, FTP_PASS);
-
-
-        // Use passive mode as default because most of us are
-        // behind firewalls these days.
-        mFTPClient.enterLocalPassiveMode();
     }
-
-
-}
