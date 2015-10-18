@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+   <me.zhanghai.android.materialedittext.MaterialTextInputLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       >
+    <me.zhanghai.android.materialedittext.MaterialEditText
+       android:id="@+id/dialNazev"
+        android:singleLine="true"
+       android:layout_width="match_parent"
+       android:layout_height="50dp"
+       android:hint="Uživatel"
+      />
+   </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
+
+    <me.zhanghai.android.materialedittext.MaterialTextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+    <me.zhanghai.android.materialedittext.MaterialEditText
+        android:id="@+id/dialPw"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Heslo"
+        android:password="true"
+        />
+    </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
+    <me.zhanghai.android.materialedittext.MaterialTextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <me.zhanghai.android.materialedittext.MaterialEditText
+        android:id="@+id/dialAdr"
+        android:singleLine="true"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Host"
+        />
+    </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
+
+</LinearLayout>
