@@ -1,6 +1,7 @@
 package baranek.vojtech.ftpclient;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
+import com.devpaul.filepickerlibrary.FilePickerActivity;
 import com.kennyc.bottomsheet.BottomSheet;
 import com.kennyc.bottomsheet.BottomSheetListener;
 
@@ -64,27 +66,91 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
                 if (files[position].isDirectory())
                 //je složka
                 {
-
-                    mAct.LoadIntoDirectory("/"+files[position].getName());
+                   mAct.LoadIntoDirectory("/"+files[position].getName());
 
                 }
                 else
                 {
                     OpenBottomSheetMenu(position);
-                    
                 }
 
+            }
+        };
+
+        View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (files[position].isDirectory())
+                //je složka
+                {
+                    OpenBottomSheetMenuForDir(position);
+              //  mAct.ShowFileBrowser();
+                }
+                else
+                {
+                 //   OpenBottomSheetMenu(position);
+
+                }
+                return false;
             }
         };
 
         holder.tv1.setOnClickListener(clickListener);
         holder.imageView.setOnClickListener(clickListener);
 
+        holder.tv1.setOnLongClickListener(longClickListener);
+        holder.imageView.setOnLongClickListener(longClickListener);
+
         holder.imageView.setTag(holder);
         holder.tv1.setTag(holder);
 
 
     }
+
+    private void OpenBottomSheetMenuForDir(int pos) {
+        posicionie = pos;
+        new BottomSheet.Builder(mAct)
+                .setSheet(R.menu.bottomsheet_dirmenu)
+                .setTitle("Podrobnosti")
+                .setListener(new BottomSheetListener() {
+                    @Override
+                    public void onSheetShown() {
+
+                    }
+
+                    @Override
+                    public void onSheetItemSelected(MenuItem menuItem) {
+
+                        switch (menuItem.getItemId()) {
+
+
+                            case R.id.menRename: {
+                                Toast.makeText(mAct, "renejm mejt", Toast.LENGTH_SHORT).show();
+                                ShowRenameDialog();
+
+                                break;
+
+                            }
+                            case R.id.menSmazat: {
+                                Toast.makeText(mAct, "smahnout mejt", Toast.LENGTH_SHORT).show();
+                                mAct.DeleteDirFromFtp(files[posicionie].getName());
+                                break;
+                            }
+
+
+                        } }
+
+
+                        @Override
+                        public void onSheetDismissed(int i) {
+
+                        }
+                    })
+                            .show();
+
+
+
+                }
 
     private void OpenBottomSheetMenu(int pos) {
 
@@ -105,20 +171,19 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
                             case R.id.menStahnout :{
 
-                                Toast.makeText(mAct, "stahnout mejt" , Toast.LENGTH_SHORT).show();
                                 ShowDownloadDialog();
                                 mAct.DownloadFtpFile(files[posicionie].getName());
 
                                 break;
 
                             }case R.id.menRename :{
-                                Toast.makeText(mAct, "renejm mejt" , Toast.LENGTH_SHORT).show();
+
                                 ShowRenameDialog();
 
                                 break;
 
                             }case R.id.menSmazat :{
-                                Toast.makeText(mAct, "smahnout mejt" , Toast.LENGTH_SHORT).show();
+
                                 mAct.DeleteFileFromFtp(files[posicionie].getName());
                                 break;
                         }

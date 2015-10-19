@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "baranek.vojtech.ftpclient"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -24,6 +24,7 @@ android {
 }
 
 dependencies {
+
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:23.+'
     compile 'com.android.support:recyclerview-v7:23.+'
@@ -40,6 +41,8 @@ dependencies {
         transitive = true
     }
 
+    compile 'info.hoang8f:fbutton:1.0.5'
+    compile 'com.github.DeveloperPaul123:FilePickerLibrary:1.0.0'
     compile project(':commons-io-2.4')
     compile project(':commons-net-3.3')
 

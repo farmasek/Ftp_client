@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/menSmazat"
+        android:icon="@drawable/ic_delete_black_24dp"
+        android:title="Smazat" />
+
+    <item
+        android:id="@+id/menRename"
+        android:icon="@drawable/ic_create_black_24dp"
+        android:title="Přejmenovat" />
+
+
+</menu>

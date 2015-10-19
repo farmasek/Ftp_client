@@ -1,7 +1,7 @@
 package baranek.vojtech.ftpclient;
 
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,29 +14,37 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
+import com.devpaul.filepickerlibrary.FilePickerActivity;
 import com.pixplicity.easyprefs.library.Prefs;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketException;
-import java.net.URL;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity  implements FolderChooserDialog.FolderCallback{
+public class MainActivity extends AppCompatActivity implements FolderChooserDialog.FolderCallback {
+    @Bind(R.id.etCesta)
+    TextView etCesta;
+    @Bind(R.id.btnPridatAdr)
+    Button btnPridatAdr;
+    @Bind(R.id.btnNahratSoubor)
+    Button btnNahratSoubor;
 
 
 
@@ -47,13 +55,13 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
 
     static final String FTP_PASS = "ciscoforlife32";*/
 
-    private String FTP_HOST,FTP_USER,FTP_PASS;
+    private String FTP_HOST, FTP_USER, FTP_PASS;
     private String chooserPath = "sdcard/Download";
     @Bind(R.id.recyclerViewMain)
     RecyclerView recyclerViewMain;
     @Bind(R.id.progress)
     ProgressBar progress;
-    private EditText etNazev, etPw, etAdr ;
+    private EditText etNazev, etPw, etAdr;
 
     private boolean isFirstime = true;
 
@@ -74,7 +82,7 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
         if (isFirstime) {
             ShowDialog();
             Prefs.putBoolean("prefFirst", false);
-        }else{
+        } else {
             LoadIntoDirectory(strPath);
         }
 
@@ -83,8 +91,8 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater= getMenuInflater();
-                inflater.inflate(R.menu.menu_main, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -103,10 +111,10 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
                 .setUseDefaultSharedPreference(true)
                 .build();
 
-        FTP_USER= Prefs.getString("prefUSER","");
-        FTP_PASS= Prefs.getString("prefPass","");
-        FTP_HOST= Prefs.getString("prefHost","");
-        isFirstime = Prefs.getBoolean("prefFirst",true);
+        FTP_USER = Prefs.getString("prefUSER", "");
+        FTP_PASS = Prefs.getString("prefPass", "");
+        FTP_HOST = Prefs.getString("prefHost", "");
+        isFirstime = Prefs.getBoolean("prefFirst", true);
 
 
     }
@@ -116,17 +124,20 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
         new AssyncFtpTask().execute(dir);
 
     }
-    public void DeleteFileFromFtp(String name){
-        new AssyncFtpTaskActions().execute("DELETE",name);
+
+    public void DeleteFileFromFtp(String name) {
+        new AssyncFtpTaskActions().execute("DELETE", name);
 
 
     }
 
-    public void RenameFileFromFtp(String original,String nove){
-        new AssyncFtpTaskActions().execute("RENAME",original,nove);
+    public void RenameFileFromFtp(String original, String nove) {
+        new AssyncFtpTaskActions().execute("RENAME", original, nove);
 
     }
+
     private String nazevsouborustringos;
+
     public void DownloadFtpFile(String nazevSouboru) {
         nazevsouborustringos = nazevSouboru;
 
@@ -135,12 +146,83 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
     @Override
     public void onFolderSelection(File file) {
 
-        chooserPath= file.getAbsolutePath()+"/"+nazevsouborustringos;
+        chooserPath = file.getAbsolutePath() + "/" + nazevsouborustringos;
 
-        new AssyncFtpTaskActions().execute("DOWNLOAD",nazevsouborustringos);
+        new AssyncFtpTaskActions().execute("DOWNLOAD", nazevsouborustringos);
     }
 
+    @OnClick (R.id.btnNahratSoubor)
+    public void ShowFileBrowser() {
+        Intent filepiIntent = new Intent(this, FilePickerActivity.class);
+        filepiIntent.putExtra(FilePickerActivity.REQUEST_CODE, FilePickerActivity.REQUEST_FILE);
+        startActivityForResult(filepiIntent, FilePickerActivity.REQUEST_FILE);
+    }
 
+   // private  String strDirName;
+    private EditText etNovyNazev;
+    @OnClick(R.id.btnPridatAdr)
+    public void CreateDir(){
+
+        final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Nový název")
+                .customView(R.layout.rename_layout, false)
+                .positiveText("Ok")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+
+                     String strDirName = etNovyNazev.getText().toString();
+                        CreateNewDir(strDirName);
+
+
+                    }
+                })
+                .negativeText("Zrušit")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
+                        materialDialog.dismiss();
+                    }
+                })
+                .build();
+
+
+        etNovyNazev = (EditText) dialog.getCustomView().findViewById(R.id.etNewName);
+        dialog.show();
+
+    }
+
+    private void CreateNewDir(String strDirName) {
+
+        new AssyncFtpTaskActions().execute("CREATEDIR", strDirName);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FilePickerActivity.REQUEST_FILE
+                && resultCode == RESULT_OK) {
+
+            String filePath = data.
+                    getStringExtra(FilePickerActivity.FILE_EXTRA_DATA_PATH);
+            if (filePath != null) {
+                //Toast.makeText(MainActivity.this, "paths" + filePath, Toast.LENGTH_SHORT).show();
+                UploadFileToFtp(filePath);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void UploadFileToFtp(String filePath) {
+
+        new AssyncFtpTaskActions().execute("UPLOADFILE",filePath);
+    }
+
+    public void DeleteDirFromFtp(String name) {
+
+        new AssyncFtpTaskActions().execute("DELETEDIR", name);
+
+    }
 
     public class AssyncFtpTask extends AsyncTask<String, Void, Integer> {
 
@@ -177,6 +259,7 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
 
         @Override
         protected void onPreExecute() {
+            recyclerViewMain.animate().alpha(0.5f);
             progress.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
         }
@@ -184,10 +267,12 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
         @Override
         protected void onPostExecute(Integer integer) {
             progress.setVisibility(View.GONE);
+            recyclerViewMain.animate().alpha(1.0f);
             if (integer == 1) {
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
-                Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
+                etCesta.setText(strPath);
+             //   Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
 
             } else {
                 Toast.makeText(getApplicationContext(), "Nepodařilo se načíst data", Toast.LENGTH_SHORT).show();
@@ -210,23 +295,41 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
                 mFTPClient.enterLocalPassiveMode();
                 mFTPClient.changeWorkingDirectory(strPath);
 
-                switch (params[0]){
-                case "DELETE": {
-                    mFTPClient.deleteFile(params[1]);
+                switch (params[0]) {
+                    case "DELETE": {
+                        mFTPClient.deleteFile(params[1]);
 
                         break;
                     }
-               case "RENAME": {
-                   mFTPClient.rename(params[1],params[2]);
+                    case "RENAME": {
+                        mFTPClient.rename(params[1], params[2]);
                         break;
                     }
-               case "DOWNLOAD": {
+                    case "DOWNLOAD": {
 
-                   FileOutputStream fos = new FileOutputStream(chooserPath);
-                    mFTPClient.retrieveFile(strPath+"/"+params[1],fos);
-                   fos.close();
-                //   FileOutputStream fos = new FileOutputStream("/sdcard/Download/fuckshit");
-                //   mFTPClient.retrieveFile("/test/složka a/wutshit",fos);
+                        FileOutputStream fos = new FileOutputStream(chooserPath);
+                        mFTPClient.retrieveFile(strPath + "/" + params[1], fos);
+                        fos.close();
+                        //   FileOutputStream fos = new FileOutputStream("/sdcard/Download/fuckshit");
+                        //   mFTPClient.retrieveFile("/test/složka a/wutshit",fos);
+                        break;
+                    }
+                    case "DELETEDIR": {
+                        boolean rem = mFTPClient.removeDirectory(params[1]);
+
+                        break;
+                    }
+                    case "CREATEDIR": {
+
+                        mFTPClient.makeDirectory(params[1]);
+
+                        break;
+                    }
+                    case "UPLOADFILE": {
+                        File f  = new File(params[1]);
+                        InputStream input = new FileInputStream(f);
+                        mFTPClient.storeFile(strPath +"/"+ f.getName().toString() ,input);
+
                         break;
                     }
                 }
@@ -241,25 +344,29 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
             }
             return result;
         }
+
         @Override
         protected void onPreExecute() {
             progress.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
+            recyclerViewMain.animate().alpha(0.5f);
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             progress.setVisibility(View.GONE);
+            recyclerViewMain.animate().alpha(1.0f);
             if (integer == 1) {
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
-                Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
+                etCesta.setText(strPath);
+                //Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
 
             } else {
                 Toast.makeText(getApplicationContext(), "Nepodařilo se provést požadovanou akci", Toast.LENGTH_SHORT).show();
             }
-        }}
-
+        }
+    }
 
 
     private void ShowDialog() {
@@ -271,12 +378,12 @@ public class MainActivity extends AppCompatActivity  implements FolderChooserDia
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
 
-                        FTP_HOST= etAdr.getText().toString();
-                        FTP_USER= etNazev.getText().toString();
-                        FTP_PASS= etPw.getText().toString();
+                        FTP_HOST = etAdr.getText().toString();
+                        FTP_USER = etNazev.getText().toString();
+                        FTP_PASS = etPw.getText().toString();
 
-                       SavePreffs();
-                       LoadIntoDirectory(strPath);
+                        SavePreffs();
+                        LoadIntoDirectory(strPath);
 
                     }
                 }).build();
