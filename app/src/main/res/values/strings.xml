@@ -1,7 +1,30 @@
 <resources>
-    <string name="app_name">FTP klient</string>
+    <string name="app_name">FTP client</string>
+    <string name="potvrdit">Confirm</string>
+    <string name="data_load_failed">Unable to load data</string>
+    <string name="action_failed">Unable to finish requested action</string>
+    <string name="conn_config">Connection configuration</string>
+    <string name="podrobnosti">Details</string>
+    <string name="connect">Conect</string>
+    <string name="Uzivatel">User</string>
+    <string name="Heslo">Password</string>
+    <string name="Host">Host</string>
+    <string name="novejmeno">New name</string>
+    <string name="pridat_adresar">Create folder</string>
+    <string name="upload_file">Upload file</string>
+    <string name="conn_settings">Settings</string>
+    <string name="greentheme">Green theme</string>
+    <string name="pink_theme">Pink theme</string>
+    <string name="menu_navod">How to use</string>
+    <string name="usage_info">Basic file browsing structure \n</string>
+    <string name="usage_info2">Long click on directory for options \n</string>
+    <string name="usage_info3">Click on files for options</string>
+    <string name="understand">Understand</string>
+    <string name="newName">New name</string>
+    <string name="cancel">Cancel</string>
+    <string name="smazat">Delete</string>
+    <string name="prejmenovat">Rename</string>
+    <string name="stahnout">Download</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="potvrdit">Potvrdit</string>
+
 </resources>

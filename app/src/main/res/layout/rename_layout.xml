@@ -6,7 +6,7 @@
         android:id="@+id/etNewName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Nové jméno"
+        android:hint="@string/novejmeno"
         />
 
 </LinearLayout>

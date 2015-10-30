@@ -13,11 +13,18 @@
 
     <color name="icons">#FFFFFF</color>
 
-    <color name="bcg">#E1BEE7</color>
+    <color name="bcg">#F3E5F5</color>
 
     <color name="divider">#B6B6B6</color>
 
 
+    <color name="primary_darkBL">#388E3C</color>
+
+    <color name="primary_lightBL">#4CAF50</color>
+
+    <color name="accentBL">#009688</color>
+
+    <color name="bcgBL">#F1F8E9</color>
 
 
 </resources>

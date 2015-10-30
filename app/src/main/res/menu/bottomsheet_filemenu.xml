@@ -4,17 +4,17 @@
     <item
         android:id="@+id/menStahnout"
         android:icon="@drawable/ic_file_download_black_24dp"
-        android:title="Stáhnout" />
+        android:title="@string/stahnout" />
 
     <item
         android:id="@+id/menSmazat"
         android:icon="@drawable/ic_delete_black_24dp"
-        android:title="Smazat" />
+        android:title="@string/smazat" />
 
     <item
         android:id="@+id/menRename"
         android:icon="@drawable/ic_create_black_24dp"
-        android:title="Přejmenovat" />
+        android:title="@string/prejmenovat" />
 
 
 </menu>

@@ -41,7 +41,7 @@ dependencies {
         transitive = true
     }
 
-    compile 'info.hoang8f:fbutton:1.0.5'
+
     compile 'com.github.DeveloperPaul123:FilePickerLibrary:1.0.0'
     compile project(':commons-io-2.4')
     compile project(':commons-net-3.3')

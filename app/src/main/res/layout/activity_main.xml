@@ -2,8 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:fbutton="http://schemas.android.com/apk/res-auto"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
@@ -11,39 +9,38 @@
 <TextView
     android:id="@+id/etCesta"
     android:layout_marginLeft="10dp"
+    android:layout_marginTop="50dp"
     android:layout_width="match_parent"
     android:layout_height="35dp"
-    android:textStyle="bold"/>
+    android:textStyle="bold"
+    android:textColor="@color/black_85" />
     <LinearLayout
-        android:padding="4dp"
-        android:layout_marginTop="40dp"
+
+        android:layout_marginTop="0dp"
         android:layout_width="match_parent"
         android:layout_height="50dp">
-    <info.hoang8f.widget.FButton
+
+        <Button
 
         android:layout_marginRight="2dp"
         android:id="@+id/btnPridatAdr"
         android:layout_width="wrap_content"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="Přidat adresář"
+            android:text="@string/pridat_adresar"
+            android:textColor="@color/icons" />
 
-        android:textColor="@color/icons"
-        fbutton:buttonColor="@color/primary_light"
-        fbutton:shadowEnabled="false"
-
-        />
-    <info.hoang8f.widget.FButton
+        <Button
         android:layout_marginLeft="2dp"
         android:id="@+id/btnNahratSoubor"
         android:layout_width="wrap_content"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="Nahrát soubor"
+            android:text="@string/upload_file"
         android:textColor="@color/icons"
-        fbutton:buttonColor="@color/primary_light"
-        fbutton:shadowEnabled="false"
-        /></LinearLayout>
+
+            />
+    </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:layout_marginTop="95dp"

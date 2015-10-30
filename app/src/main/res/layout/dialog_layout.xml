@@ -13,7 +13,7 @@
         android:singleLine="true"
        android:layout_width="match_parent"
        android:layout_height="50dp"
-       android:hint="Uživatel"
+        android:hint="@string/Uzivatel"
       />
    </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
 
@@ -26,7 +26,7 @@
         android:singleLine="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Heslo"
+        android:hint="@string/Heslo"
         android:password="true"
         />
     </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
@@ -39,7 +39,7 @@
         android:singleLine="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Host"
+            android:hint="@string/Host"
         />
     </me.zhanghai.android.materialedittext.MaterialTextInputLayout>
 

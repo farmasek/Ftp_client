@@ -1,7 +1,6 @@
 package baranek.vojtech.ftpclient;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -10,13 +9,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.folderselector.FolderChooserDialog;
-import com.devpaul.filepickerlibrary.FilePickerActivity;
 import com.kennyc.bottomsheet.BottomSheet;
 import com.kennyc.bottomsheet.BottomSheetListener;
 
@@ -24,6 +20,8 @@ import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * Created by Farmas on 17.10.2015.
+ *
+ * Custom adapter for RecylclerView for displaying files
  */
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.CustomViewHolder>  {
 
@@ -50,46 +48,58 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
     @Override
     public void onBindViewHolder(final MyRecyclerAdapter.CustomViewHolder holder, final int position) {
+        /**
+         * Set different images for folder / directory
+         */
         if (files[position].isDirectory())
-            //je složka
+        /**
+         * Is directory
+         */
         {holder.imageView.setBackgroundResource(R.drawable.ic_folder_open_black_48dp);}
         else{
-            // je soubor
+            /**
+             * is file
+             */
             holder.imageView.setBackgroundResource(R.drawable.ic_insert_drive_file_black_48dp);
         }
 
         holder.tv1.setText(String.valueOf(files[position].getName()));
 
+        /**
+         * Actions for item click
+         */
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (files[position].isDirectory())
-                //je složka
+                /**
+                 * Open folder
+                 */
                 {
                    mAct.LoadIntoDirectory("/"+files[position].getName());
-
                 }
                 else
                 {
+                    /**
+                     * Show bottom sheet for file
+                     */
                     OpenBottomSheetMenu(position);
                 }
 
             }
         };
-
+        /**
+         * Actions for long click on directory
+         */
         View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 if (files[position].isDirectory())
-                //je složka
+                /**
+                 * Open bottom sheet for directory
+                 */
                 {
                     OpenBottomSheetMenuForDir(position);
-              //  mAct.ShowFileBrowser();
-                }
-                else
-                {
-                 //   OpenBottomSheetMenu(position);
-
                 }
                 return false;
             }
@@ -107,11 +117,17 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
     }
 
+    /**
+     * Bottom sheet for directories actions
+     *
+     * @param pos position of clicked directory
+     */
+
     private void OpenBottomSheetMenuForDir(int pos) {
         posicionie = pos;
         new BottomSheet.Builder(mAct)
                 .setSheet(R.menu.bottomsheet_dirmenu)
-                .setTitle("Podrobnosti")
+                .setTitle(R.string.podrobnosti)
                 .setListener(new BottomSheetListener() {
                     @Override
                     public void onSheetShown() {
@@ -123,41 +139,49 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
                         switch (menuItem.getItemId()) {
 
-
+                            /**
+                             * Rename direcotry
+                             */
                             case R.id.menRename: {
-                                Toast.makeText(mAct, "renejm mejt", Toast.LENGTH_SHORT).show();
                                 ShowRenameDialog();
-
                                 break;
 
                             }
+                            /**
+                             * Delete directory
+                             */
                             case R.id.menSmazat: {
-                                Toast.makeText(mAct, "smahnout mejt", Toast.LENGTH_SHORT).show();
                                 mAct.DeleteDirFromFtp(files[posicionie].getName());
                                 break;
                             }
 
 
-                        } }
-
-
-                        @Override
-                        public void onSheetDismissed(int i) {
-
                         }
-                    })
+                    }
+
+
+                    @Override
+                    public void onSheetDismissed(int i) {
+
+                    }
+                })
                             .show();
 
 
+    }
 
-                }
+    /**
+     * Open bottom sheet for files options
+     *
+     * @param pos position of file
+     */
 
     private void OpenBottomSheetMenu(int pos) {
 
         posicionie = pos;
         new BottomSheet.Builder(mAct)
                 .setSheet(R.menu.bottomsheet_filemenu)
-                .setTitle("Podrobnosti")
+                .setTitle(R.string.podrobnosti)
                 .setListener(new BottomSheetListener() {
                     @Override
                     public void onSheetShown() {
@@ -169,6 +193,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
                         switch (menuItem.getItemId()) {
 
+                            /**
+                             * Download file, show folder chooser dialog
+                             */
                             case R.id.menStahnout :{
 
                                 ShowDownloadDialog();
@@ -176,24 +203,24 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
                                 break;
 
+                                /**
+                                 * Rename file
+                                 */
                             }case R.id.menRename :{
 
                                 ShowRenameDialog();
 
                                 break;
 
+                                /**
+                                 * Delete file
+                                 */
                             }case R.id.menSmazat :{
 
                                 mAct.DeleteFileFromFtp(files[posicionie].getName());
                                 break;
                         }
-
-
                 }
-
-
-
-
                     }
 
                     @Override
@@ -204,9 +231,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
                 .show();
 
 
-
     }
 
+    /**
+     * Show dialog for download method
+     */
     private void ShowDownloadDialog() {
 
         final FolderChooserDialog folderrCh = new FolderChooserDialog.Builder(mAct)
@@ -217,6 +246,10 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
 
     private EditText etNovyNazev;
     private String strNovyNazev;
+
+    /**
+     * Show dialog for rename, get name and rename
+     */
 
     private void ShowRenameDialog() {
 
@@ -254,6 +287,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.Cu
         int i = files.length;
         return i;
     }
+
+
+    /**
+     * Custom view holder for row
+     */
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
 

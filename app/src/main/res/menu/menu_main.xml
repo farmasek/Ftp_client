@@ -1,6 +1,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_settings" android:title="Nastavení"
-        android:orderInCategory="100" app:showAsAction="always" />
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/conn_settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        android:orderInCategory="1"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_green"
+        android:title="@string/greentheme"
+        android:icon="@drawable/ic_format_color_fill_green_700_24dp"
+        android:orderInCategory="90"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/acion_pink"
+        android:title="@string/pink_theme"
+        android:icon="@drawable/color_pink"
+        android:orderInCategory="90"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/acion_info"
+        android:title="@string/menu_navod"
+        android:orderInCategory="150"
+        app:showAsAction="never" />
+
+
 </menu>

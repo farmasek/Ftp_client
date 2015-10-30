@@ -47,14 +47,6 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
     Button btnNahratSoubor;
 
 
-
-
- /*   static final String FTP_HOST = "f14-preview.royalwebhosting.net";
-
-    static final String FTP_USER = "1969250";
-
-    static final String FTP_PASS = "ciscoforlife32";*/
-
     private String FTP_HOST, FTP_USER, FTP_PASS;
     private String chooserPath = "sdcard/Download";
     @Bind(R.id.recyclerViewMain)
@@ -70,14 +62,23 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
     private FTPFile[] files;
     private String strPath = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ThemChanger.onActivityCreateSetTheme(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
         GetLastPreferences();
         recyclerViewMain.setLayoutManager(new LinearLayoutManager(this));
 
+
+        /**
+         * Open configuration dialog if its first app run
+         * */
 
         if (isFirstime) {
             ShowDialog();
@@ -99,10 +100,39 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        ShowDialog();
+        switch (item.getItemId()) {
+            case R.id.action_settings: {
+                ShowDialog();
+                break;
+            }
+            case R.id.acion_pink: {
+                ThemChanger.changeToTheme(this, ThemChanger.THEME_PINK);
+                break;
+            }
+            case R.id.action_green: {
+                ThemChanger.changeToTheme(this, ThemChanger.THEME_GREEN);
+                break;
+            }
+            case R.id.acion_info: {
+                new MaterialDialog.Builder(this)
+                        .title(getString(R.string.menu_navod))
+                        .content(getString(R.string.usage_info) +
+                                getString(R.string.usage_info2) +
+                                getString(R.string.usage_info3))
+                        .positiveText(R.string.understand)
+                        .show();
+
+                break;
+            }
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Load last setting preferences
+     */
     private void GetLastPreferences() {
         new Prefs.Builder()
                 .setContext(this)
@@ -119,22 +149,35 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
 
     }
 
+    /**
+     * Open directory method
+     */
     public void LoadIntoDirectory(String dir) {
 
         new AssyncFtpTask().execute(dir);
 
     }
 
+    /**
+     * Delete file method
+     */
     public void DeleteFileFromFtp(String name) {
         new AssyncFtpTaskActions().execute("DELETE", name);
 
 
     }
 
+    /**
+     * Rename file method
+     */
     public void RenameFileFromFtp(String original, String nove) {
         new AssyncFtpTaskActions().execute("RENAME", original, nove);
 
     }
+
+    /**
+     * Download file method
+     * */
 
     private String nazevsouborustringos;
 
@@ -143,13 +186,18 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
 
     }
 
+    /**
+     *Get directory path from path chooser to for download file
+     * */
     @Override
     public void onFolderSelection(File file) {
-
         chooserPath = file.getAbsolutePath() + "/" + nazevsouborustringos;
-
         new AssyncFtpTaskActions().execute("DOWNLOAD", nazevsouborustringos);
     }
+
+    /**
+     *Choose file from phone to download
+     */
 
     @OnClick (R.id.btnNahratSoubor)
     public void ShowFileBrowser() {
@@ -158,26 +206,28 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
         startActivityForResult(filepiIntent, FilePickerActivity.REQUEST_FILE);
     }
 
-   // private  String strDirName;
+    /**
+     Open dialog create new directory, get directory name
+     */
     private EditText etNovyNazev;
     @OnClick(R.id.btnPridatAdr)
     public void CreateDir(){
 
         final MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title("Nový název")
+                .title(R.string.newName)
                 .customView(R.layout.rename_layout, false)
-                .positiveText("Ok")
+                .positiveText(R.string.potvrdit)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
 
-                     String strDirName = etNovyNazev.getText().toString();
+                        String strDirName = etNovyNazev.getText().toString();
                         CreateNewDir(strDirName);
 
 
                     }
                 })
-                .negativeText("Zrušit")
+                .negativeText(R.string.cancel)
                 .onNegative(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
@@ -192,12 +242,17 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
 
     }
 
+    /**
+     *Create new directory method
+     */
     private void CreateNewDir(String strDirName) {
-
         new AssyncFtpTaskActions().execute("CREATEDIR", strDirName);
 
     }
 
+    /**
+     *Get uploading file's path
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FilePickerActivity.REQUEST_FILE
@@ -206,24 +261,30 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             String filePath = data.
                     getStringExtra(FilePickerActivity.FILE_EXTRA_DATA_PATH);
             if (filePath != null) {
-                //Toast.makeText(MainActivity.this, "paths" + filePath, Toast.LENGTH_SHORT).show();
                 UploadFileToFtp(filePath);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     Upload file to ftp method
+     */
     private void UploadFileToFtp(String filePath) {
-
         new AssyncFtpTaskActions().execute("UPLOADFILE",filePath);
     }
 
+    /**
+     Delete directory from ftp
+     */
     public void DeleteDirFromFtp(String name) {
-
         new AssyncFtpTaskActions().execute("DELETEDIR", name);
-
     }
 
+
+    /**
+     Assync task for ftp directory browsing
+     */
     public class AssyncFtpTask extends AsyncTask<String, Void, Integer> {
 
         @Override
@@ -233,15 +294,24 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
 
             try {
 
+                /**
+                 Establish connection to ftp, set passive mod
+                 */
                 mFTPClient.setControlEncoding("UTF-8");
                 mFTPClient.connect(FTP_HOST, 21);
                 mFTPClient.login(FTP_USER, FTP_PASS);
                 mFTPClient.enterLocalPassiveMode();
                 if (params[0].equals("/..")) {
+                    /**
+                     Move to previous directory
+                     */
                     int i = 0;
                     i = strPath.lastIndexOf("/");
                     strPath = strPath.substring(0, i);
                 } else {
+                    /**
+                     Open directory
+                     */
                     strPath = strPath + "/" + params[0];
                 }
                 mFTPClient.changeWorkingDirectory(strPath);
@@ -257,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             return result;
         }
 
+        /**
+         * Show progress bar
+         */
         @Override
         protected void onPreExecute() {
             recyclerViewMain.animate().alpha(0.5f);
@@ -264,6 +337,9 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             setProgressBarIndeterminateVisibility(true);
         }
 
+        /**
+         * Hide progress bar, show files, if successful, show toast if not.
+         */
         @Override
         protected void onPostExecute(Integer integer) {
             progress.setVisibility(View.GONE);
@@ -272,14 +348,16 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
                 etCesta.setText(strPath);
-             //   Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
 
             } else {
-                Toast.makeText(getApplicationContext(), "Nepodařilo se načíst data", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.data_load_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     * Assync task  for operations with files
+     */
     public class AssyncFtpTaskActions extends AsyncTask<String, Void, Integer> {
 
         @Override
@@ -288,12 +366,18 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             Integer result = 0;
 
             try {
-
+                /**
+                 Establish connection
+                 */
                 mFTPClient.setControlEncoding("UTF-8");
                 mFTPClient.connect(FTP_HOST, 21);
                 mFTPClient.login(FTP_USER, FTP_PASS);
                 mFTPClient.enterLocalPassiveMode();
                 mFTPClient.changeWorkingDirectory(strPath);
+
+                /**
+                 Action with files
+                 */
 
                 switch (params[0]) {
                     case "DELETE": {
@@ -310,8 +394,6 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                         FileOutputStream fos = new FileOutputStream(chooserPath);
                         mFTPClient.retrieveFile(strPath + "/" + params[1], fos);
                         fos.close();
-                        //   FileOutputStream fos = new FileOutputStream("/sdcard/Download/fuckshit");
-                        //   mFTPClient.retrieveFile("/test/složka a/wutshit",fos);
                         break;
                     }
                     case "DELETEDIR": {
@@ -329,7 +411,6 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                         File f  = new File(params[1]);
                         InputStream input = new FileInputStream(f);
                         mFTPClient.storeFile(strPath +"/"+ f.getName().toString() ,input);
-
                         break;
                     }
                 }
@@ -345,12 +426,20 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             return result;
         }
 
+        /**
+         * show progress bar
+         */
+
         @Override
         protected void onPreExecute() {
             progress.setVisibility(View.VISIBLE);
             setProgressBarIndeterminateVisibility(true);
             recyclerViewMain.animate().alpha(0.5f);
         }
+
+        /**
+         Show changed files or fail message
+         */
 
         @Override
         protected void onPostExecute(Integer integer) {
@@ -360,20 +449,23 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
                 etCesta.setText(strPath);
-                //Toast.makeText(getApplicationContext(), "Cur path :" + strPath, Toast.LENGTH_SHORT).show();
+
 
             } else {
-                Toast.makeText(getApplicationContext(), "Nepodařilo se provést požadovanou akci", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.action_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    /**
+     Show dialog for  connection settings
+     */
 
     private void ShowDialog() {
         MaterialDialog dialog = new MaterialDialog.Builder(this)
-                .title("Kakdela")
+                .title(R.string.conn_config)
                 .customView(R.layout.dialog_layout, false)
-                .positiveText("Ok")
+                .positiveText(R.string.connect)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(MaterialDialog materialDialog, DialogAction dialogAction) {
@@ -398,13 +490,14 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
         dialog.show();
     }
 
+    /***
+     save prefferences
+     */
+
     private void SavePreffs() {
-
-
         Prefs.putString("prefUSER", FTP_USER);
         Prefs.putString("prefPass", FTP_PASS);
         Prefs.putString("prefHost", FTP_HOST);
-
     }
 
 }

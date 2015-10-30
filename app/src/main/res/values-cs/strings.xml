@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FTP klient</string>
+    <string name="potvrdit">Potvrdit</string>
+    <string name="data_load_failed">Nepodařilo se načíst data</string>
+    <string name="action_failed">Nepodařilo se provést požadovanou akci</string>
+    <string name="conn_config">Konfigurace připojení</string>
+    <string name="podrobnosti">Podrobnosti</string>
+    <string name="connect">Připojit</string>
+    <string name="Uzivatel">Uživatel</string>
+    <string name="Heslo">Heslo</string>
+    <string name="Host">Host</string>
+    <string name="novejmeno">Nové jméno</string>
+    <string name="pridat_adresar">Přidat adresář</string>
+    <string name="upload_file">Nahrát soubor</string>
+    <string name="conn_settings">Nastavení</string>
+    <string name="greentheme">Zelené téma</string>
+    <string name="pink_theme">Růžové téma</string>
+    <string name="menu_navod">Návod k použití</string>
+    <string name="usage_info">Základní procházení souborů \n</string>
+    <string name="usage_info2">Dlouhý klik na složku pro možnosti \n</string>
+    <string name="usage_info3">Krátky klik na soubor pro možnosti</string>
+    <string name="understand">Rozumím</string>
+    <string name="newName">Nový název</string>
+    <string name="cancel">Zrušit</string>
+    <string name="smazat">Smazat</string>
+    <string name="prejmenovat">Přejmenovat</string>
+    <string name="stahnout">Stáhnout</string>
+
+
+</resources>

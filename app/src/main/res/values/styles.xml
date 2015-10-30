@@ -7,8 +7,34 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:windowBackground">@color/bcg</item>
         <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="cardStyle">@style/CardViewStyle</item>
+        <item name="colorButtonNormal">@color/accent</item>
+
 
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="CardViewStyle" parent="CardView">
+        <item name="cardBackgroundColor">@color/bcg</item>
+
+    </style>
+
+    <style name="CardViewStyleBL" parent="CardView">
+        <item name="cardBackgroundColor">@color/bcgBL</item>
+
+    </style>
+
+    <style name="AppThemeBlue" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/primary_lightBL</item>
+        <item name="colorPrimaryDark">@color/primary_darkBL</item>
+        <item name="colorAccent">@color/accentBL</item>
+        <item name="android:windowBackground">@color/bcgBL</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="cardStyle">@style/CardViewStyleBL</item>
+        <item name="colorButtonNormal">@color/accentBL</item>
+
+        <!-- Customize your theme here. -->
+    </style>
+
 
 </resources>
