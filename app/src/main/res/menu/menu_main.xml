@@ -5,7 +5,13 @@
         android:id="@+id/action_settings"
         android:title="@string/conn_settings"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:orderInCategory="1"
+        android:orderInCategory="3"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_disconect"
+        android:title="@string/disconect"
+        android:icon="@drawable/ic_cancel_white_24dp"
+        android:orderInCategory="2"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_green"

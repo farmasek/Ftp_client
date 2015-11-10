@@ -27,6 +27,10 @@
     <string name="smazat">Smazat</string>
     <string name="prejmenovat">Přejmenovat</string>
     <string name="stahnout">Stáhnout</string>
+    <string name="disconect">Odpojit</string>
+    <string name="filealreadyExiists">Soubor již existuje</string>
+    <string name="folderalreadyexists">Složka již existuje</string>
+    <string name="dcd">Odpojeno</string>
 
 
 </resources>

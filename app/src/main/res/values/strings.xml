@@ -25,6 +25,10 @@
     <string name="smazat">Delete</string>
     <string name="prejmenovat">Rename</string>
     <string name="stahnout">Download</string>
+    <string name="disconect">Disconect</string>
+    <string name="filealreadyExiists">File already exists</string>
+    <string name="folderalreadyexists">Foldear already exists</string>
+    <string name="dcd">Disconnected</string>
 
 
 </resources>

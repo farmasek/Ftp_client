@@ -124,10 +124,32 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
 
                 break;
             }
+            case R.id.action_disconect: {
+                disconnectActions();
+                break;
+            }
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void disconnectActions() {
+
+        changeButtonsEnability(false);
+        strPath = "";
+        etCesta.setText(strPath);
+        adapter = new MyRecyclerAdapter(getApplicationContext(), new FTPFile[0], MainActivity.this);
+        recyclerViewMain.setAdapter(adapter);
+
+        Toast.makeText(getApplicationContext(), R.string.dcd, Toast.LENGTH_LONG).show();
+
+    }
+
+    private void changeButtonsEnability(boolean val) {
+        btnNahratSoubor.setEnabled(val);
+        btnPridatAdr.setEnabled(val);
+
     }
 
     /**
@@ -301,6 +323,7 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                 mFTPClient.connect(FTP_HOST, 21);
                 mFTPClient.login(FTP_USER, FTP_PASS);
                 mFTPClient.enterLocalPassiveMode();
+
                 if (params[0].equals("/..")) {
                     /**
                      Move to previous directory
@@ -348,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
                 etCesta.setText(strPath);
+                changeButtonsEnability(true);
 
             } else {
                 Toast.makeText(getApplicationContext(), R.string.data_load_failed, Toast.LENGTH_SHORT).show();
@@ -403,14 +427,34 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
                     }
                     case "CREATEDIR": {
 
-                        mFTPClient.makeDirectory(params[1]);
+                        if (mFTPClient.changeWorkingDirectory(params[1])) {
+                            strPath = strPath + "/" + params[1];
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), R.string.folderalreadyexists, Toast.LENGTH_SHORT).show();
+                                }
+                            });
 
+                        } else {
+                            mFTPClient.makeDirectory(params[1]);
+                        }
                         break;
                     }
                     case "UPLOADFILE": {
                         File f  = new File(params[1]);
                         InputStream input = new FileInputStream(f);
-                        mFTPClient.storeFile(strPath +"/"+ f.getName().toString() ,input);
+                        if (mFTPClient.getReplyCode() != 550) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), R.string.filealreadyExiists, Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                        } else {
+                            mFTPClient.storeFile(strPath + "/" + f.getName().toString(), input);
+                        }
                         break;
                     }
                 }
@@ -446,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements FolderChooserDial
             progress.setVisibility(View.GONE);
             recyclerViewMain.animate().alpha(1.0f);
             if (integer == 1) {
+
                 adapter = new MyRecyclerAdapter(getApplicationContext(), files, MainActivity.this);
                 recyclerViewMain.setAdapter(adapter);
                 etCesta.setText(strPath);
